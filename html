@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRDC Medicaid Volunteer & Hour Tracking Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- TOP HEADER / BRANDING -->
+    <header class="bg-emerald-900 text-white shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white p-2 rounded-lg shadow-inner">
+                    <!-- Custom SVG representing HRDC & Community Health -->
+                    <svg class="w-8 h-8 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">HRDC District IX</h1>
+                    <p class="text-xs text-emerald-200">Medicaid Expansion Hour Verification Portal</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 bg-emerald-850 px-3 py-1.5 rounded-full text-xs font-semibold text-emerald-100 border border-emerald-700">
+                <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span>Active Tracking Period: July – September 2026</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP WRAPPER -->
+    <main id="app" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 no-print">
+        
+        <!-- MAIN NAVIGATION TABS -->
+        <div class="border-b border-slate-200 mb-6">
+            <nav class="flex flex-wrap -mb-px space-x-2 sm:space-x-4" aria-label="Tabs">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn border-b-2 py-3 px-4 text-sm font-medium transition-all duration-150 flex items-center space-x-2 text-emerald-600 border-emerald-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('form')" id="tab-form" class="tab-btn border-b-2 py-3 px-4 text-sm font-medium transition-all duration-150 flex items-center space-x-2 text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Log New Hours</span>
+                </button>
+                <button onclick="switchTab('history')" id="tab-history" class="tab-btn border-b-2 py-3 px-4 text-sm font-medium transition-all duration-150 flex items-center space-x-2 text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Verification Log</span>
+                </button>
+                <button onclick="switchTab('verification-sheet')" id="tab-verification-sheet" class="tab-btn border-b-2 py-3 px-4 text-sm font-medium transition-all duration-150 flex items-center space-x-2 text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 05-2-2H9a2 2 0 05-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <span>Print State Form</span>
+                </button>
+                <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn border-b-2 py-3 px-4 text-sm font-medium transition-all duration-150 flex items-center space-x-2 text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Rules & FAQs</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- PROFILE CONFIGURATION BANNER (State Persisted) -->
+        <section class="bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-50 p-2.5 rounded-lg text-indigo-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm md:text-base" id="header-user-name">Configuring Volunteer Log...</h3>
+                    <p class="text-xs text-slate-500">Case #<span id="header-user-case">N/A</span> | Medicaid ID: <span id="header-user-medid">N/A</span></p>
+                </div>
+            </div>
+            <button onclick="openProfileModal()" class="text-xs bg-slate-150 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg transition-all border border-slate-300 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Change Personal Info
+            </button>
+        </section>
+
+        <!-- ================== 1. DASHBOARD VIEW ================== -->
+        <div id="view-dashboard" class="tab-view space-y-6">
+            <!-- Montana DPHHS Hold Harmless Notice Banner -->
+            <div class="bg-gradient-to-r from-amber-50 to-amber-100 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm">
+                <div class="flex">
+                    <div class="flex-shrink-0 text-amber-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-bold text-amber-900">Montana DPHHS "Hold Harmless" Status Announcement (2026)</h3>
+                        <p class="mt-1 text-xs text-amber-800 leading-relaxed">
+                            From July through September 2026, Montana DPHHS has implemented a <strong>hold harmless period</strong> for the newly activated community engagement rules. Your Medicaid coverage will not be dis-enrolled for reporting deficits during this phase, but hours must still be actively tracked and reported to demonstrate readiness for mandatory compliance enforcement starting in <strong>October 2026</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Statistics and Progress Widgets -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Circular/Semi-Circular/Card Progress tracker towards 80 hours -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Monthly Requirement Progress</h4>
+                        <h2 class="text-2xl font-extrabold text-slate-800">80 Hour Goal</h2>
+                        <p class="text-xs text-slate-500 mt-1 mb-4">Required each calendar month for Medicaid Expansion enrollees aged 19-64.</p>
+                    </div>
+
+                    <!-- Progress Bar Component -->
+                    <div class="my-4">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-3xl font-black text-emerald-600" id="dash-total-hours">0.0</span>
+                            <span class="text-xs font-bold text-slate-500">of 80.0 Hours Completed</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden border border-slate-200 shadow-inner">
+                            <div id="dash-progress-bar" class="bg-emerald-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 font-semibold mt-2">
+                            <span>0 Hrs</span>
+                            <span>40 Hrs (50%)</span>
+                            <span>80 Hrs Goal</span>
+                        </div>
+                    </div>
+
+                    <div id="dash-status-badge" class="bg-amber-50 text-amber-700 border border-amber-200 rounded-lg p-3 text-xs mt-2 text-center font-medium">
+                        Still need <span id="dash-hours-needed" class="font-bold">80.0</span> hours to hit your goal this month.
+                    </div>
+                </div>
+
+                <!-- Fast Info metrics grid -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between col-span-1 lg:col-span-2">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Active Month Status Summary</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-3">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <span class="text-xs text-slate-500 block font-medium">Month Period</span>
+                                <span class="text-lg font-bold text-slate-800" id="dash-current-month">July 2026</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <span class="text-xs text-slate-500 block font-medium">Total Entries</span>
+                                <span class="text-lg font-bold text-slate-800" id="dash-total-entries">0 Logs</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <span class="text-xs text-slate-500 block font-medium">Days Left in Month</span>
+                                <span class="text-lg font-bold text-slate-800" id="dash-days-left">25 Days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 mt-4">
+                        <h5 class="text-xs font-bold text-slate-500 uppercase mb-3">Qualifying HRDC Category Breakdown</h5>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="bg-emerald-50/50 p-2.5 rounded-lg border border-emerald-100">
+                                <span class="text-[10px] font-bold text-emerald-800 block">Community Service</span>
+                                <span class="text-sm font-bold text-slate-800" id="breakdown-cs">0.0 hrs</span>
+                            </div>
+                            <div class="bg-teal-50/50 p-2.5 rounded-lg border border-teal-100">
+                                <span class="text-[10px] font-bold text-teal-800 block">Volunteering</span>
+                                <span class="text-sm font-bold text-slate-800" id="breakdown-vol">0.0 hrs</span>
+                            </div>
+                            <div class="bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-100">
+                                <span class="text-[10px] font-bold text-indigo-800 block">Workforce Dev</span>
+                                <span class="text-sm font-bold text-slate-800" id="breakdown-job">0.0 hrs</span>
+                            </div>
+                            <div class="bg-sky-50/50 p-2.5 rounded-lg border border-sky-100">
+                                <span class="text-[10px] font-bold text-sky-800 block">Employment/Edu</span>
+                                <span class="text-sm font-bold text-slate-800" id="breakdown-emp">0.0 hrs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fast Action & HRDC Specific Service Locations -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Log quick guidance card -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-2">Need to verify hours on-the-spot?</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            You can log your service sessions right inside this app. If you have your site coordinator or HRDC supervisor nearby, switch to the <strong>Log New Hours</strong> tab and they can physically sign off on your timesheet directly on your smartphone, tablet, or computer screen.
+                        </p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button onclick="switchTab('form')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg text-sm text-center transition duration-150 flex items-center justify-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Log New Hours Entry
+                        </button>
+                        <button onclick="switchTab('verification-sheet')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-semibold py-2 px-4 rounded-lg text-sm text-center transition duration-150 flex items-center justify-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 05-2-2H9a2 2 0 05-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            Generate Printable Form
+                        </button>
+                    </div>
+                </div>
+
+                <!-- HRDC Official Programs Catalog -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-3">Qualifying HRDC Programs / Contact Info</h4>
+                    <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                        <div class="p-2.5 hover:bg-slate-50 rounded-lg border border-slate-100 transition duration-150">
+                            <div class="flex justify-between items-start">
+                                <span class="font-semibold text-xs text-slate-800">Gallatin Valley Food Bank</span>
+                                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">Bozeman, MT</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Accepts community service & volunteers. Scheduling shifts in advance required.</p>
+                        </div>
+                        <div class="p-2.5 hover:bg-slate-50 rounded-lg border border-slate-100 transition duration-150">
+                            <div class="flex justify-between items-start">
+                                <span class="font-semibold text-xs text-slate-800">Fork & Spoon Community Oven</span>
+                                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">Bozeman, MT</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Montana's pay-what-you-can dinner model. Great evening shifts for hours tracking.</p>
+                        </div>
+                        <div class="p-2.5 hover:bg-slate-50 rounded-lg border border-slate-100 transition duration-150">
+                            <div class="flex justify-between items-start">
+                                <span class="font-semibold text-xs text-slate-800">Homeward Point Emergency Shelter</span>
+                                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">Bozeman, MT</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Shelter and drop-in support. Shifts support vulnerable neighbors directly.</p>
+                        </div>
+                        <div class="p-2.5 hover:bg-slate-50 rounded-lg border border-slate-100 transition duration-150">
+                            <div class="flex justify-between items-start">
+                                <span class="font-semibold text-xs text-slate-800">Headwaters Area Food Bank</span>
+                                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">Three Forks, MT</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Supports community service & nutrition outreach projects in Broadwater/Gallatin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== 2. HOUR LOGGING FORM VIEW ================== -->
+        <div id="view-form" class="tab-view hidden max-w-3xl mx-auto">
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="bg-emerald-850 bg-emerald-900 text-white p-6">
+                    <h3 class="text-lg font-bold">Log Volunteer/Community Engagement Hours</h3>
+                    <p class="text-xs text-emerald-100 mt-1">Submit complete and honest logs. Supervisor signature confirmation can be obtained digitally below or printed later.</p>
+                </div>
+                
+                <form id="hour-log-form" onsubmit="saveHourEntry(event)" class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Date of Activity *</label>
+                            <input type="date" id="form-date" required class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Activity Classification *</label>
+                            <select id="form-activity-type" required class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white">
+                                <option value="Community Service">Required Community Service / Court Order</option>
+                                <option value="Volunteering" selected>Volunteering (Standard Public Interest)</option>
+                                <option value="Workforce Development">Workforce Training / Job Preparedness</option>
+                                <option value="Employment/Education">Regular Employment or Education Hours</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">HRDC Service Site *</label>
+                            <select id="form-site" required class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white">
+                                <option value="Gallatin Valley Food Bank">Gallatin Valley Food Bank (Bozeman)</option>
+                                <option value="Fork & Spoon Community Oven">Fork & Spoon Community Oven</option>
+                                <option value="Homeward Point Emergency Shelter">Homeward Point Shelter</option>
+                                <option value="Big Sky Community Food Bank">Big Sky Community Food Bank</option>
+                                <option value="Headwaters Area Food Bank">Headwaters Area Food Bank (Three Forks)</option>
+                                <option value="HRDC Community Gardens">HRDC Gardens & Nutrition projects</option>
+                                <option value="Other Non-HRDC Approved Site">Other Approved Community Site (Custom)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Total Hours Worked *</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" id="form-hours" min="0.5" max="24" step="0.5" required placeholder="e.g. 3.5" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                                <span class="text-sm font-semibold text-slate-500">hours</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Task description / Accomplishments *</label>
+                        <textarea id="form-description" required rows="2" placeholder="Explain tasks performed (e.g., sorted food drive shelf, prepared meals, registered clients)" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"></textarea>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="text-sm font-bold text-slate-800 mb-2">Supervisor/Coordinator Validation Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Supervisor Full Name *</label>
+                                <input type="text" id="form-sup-name" required placeholder="Supervisor name" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Contact Email or Phone Number *</label>
+                                <input type="text" id="form-sup-contact" required placeholder="Email or Phone" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Touch Signature Field with canvas -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center">
+                                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide">Digital On-Screen Sign-Off (Optional)</label>
+                                <button type="button" onclick="clearSignatureCanvas()" class="text-[10px] text-rose-600 hover:text-rose-800 font-bold transition">Clear Canvas</button>
+                            </div>
+                            <div class="border border-dashed border-slate-300 bg-slate-50 rounded-xl relative overflow-hidden h-36 flex items-center justify-center">
+                                <span class="absolute pointer-events-none text-[11px] text-slate-400 font-medium select-none">Have supervisor sign inside this box</span>
+                                <canvas id="signature-canvas" class="w-full h-full block relative cursor-crosshair z-10"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-lg text-sm transition duration-150 shadow-md">
+                            Save Activity Log Entry
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================== 3. LOG HISTORY VIEW ================== -->
+        <div id="view-history" class="tab-view hidden space-y-6">
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                <!-- Search & Filter Controls -->
+                <div class="p-5 border-b border-slate-200 bg-slate-50 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Your Verification History Log</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Below is your generated sequence of logged tasks for verification audit submission.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="filter-activity" onchange="renderHistoryTable()" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                            <option value="All">All Classifications</option>
+                            <option value="Community Service">Community Service</option>
+                            <option value="Volunteering">Volunteering</option>
+                            <option value="Workforce Development">Workforce Dev</option>
+                            <option value="Employment/Education">Employment/Edu</option>
+                        </select>
+                        <button onclick="clearAllLogs()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold px-3 py-1.5 rounded-lg transition">
+                            Reset All Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hour Entry Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date & Program</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Classification</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Description</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Hours</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Supervisor Contact</th>
+                                <th scope="col" class="px-6 py-3 class-col text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Sign-Off</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="bg-white divide-y divide-slate-200">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State Message -->
+                <div id="history-empty-state" class="py-12 text-center hidden">
+                    <svg class="mx-auto h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <h3 class="mt-2 text-sm font-bold text-slate-800">No logs found</h3>
+                    <p class="mt-1 text-xs text-slate-500">Get started by entering hours worked in the "Log New Hours" tab.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== 4. PRINT PREVIEW VIEW ================== -->
+        <div id="view-verification-sheet" class="tab-view hidden space-y-6">
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm max-w-4xl mx-auto">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Official Medicaid Hours Verification Sheet</h3>
+                        <p class="text-xs text-slate-500">Review, sign, and print this page using your browser's Print option (Ctrl+P / Cmd+P).</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 05-2-2H9a2 2 0 05-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Print Now
+                    </button>
+                </div>
+
+                <!-- Simulation layout of DPHHS Sheet -->
+                <div class="p-8 border border-slate-300 rounded-lg bg-white relative">
+                    <div class="text-center pb-6 border-b-2 border-double border-slate-300">
+                        <h2 class="text-lg font-extrabold text-slate-800">MONTANA DEPARTMENT OF PUBLIC HEALTH & HUMAN SERVICES</h2>
+                        <h3 class="text-sm font-bold text-slate-700 mt-1 uppercase tracking-wider">Medicaid Expansion Community Engagement Timesheet</h3>
+                        <p class="text-[11px] text-slate-500 mt-1 italic">HRDC District IX Service Verification Coordination Partner</p>
+                    </div>
+
+                    <!-- User metadata details block -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-6 border-b border-slate-200 text-xs">
+                        <div>
+                            <span class="text-slate-400 block font-semibold uppercase text-[10px]">Recipient Full Name</span>
+                            <span class="font-bold text-slate-800" id="sheet-user-name">John Doe</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block font-semibold uppercase text-[10px]">DPHHS Case ID #</span>
+                            <span class="font-bold text-slate-800" id="sheet-case-id">N/A</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block font-semibold uppercase text-[10px]">Medicaid Recipient ID</span>
+                            <span class="font-bold text-slate-800" id="sheet-medicaid-id">N/A</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block font-semibold uppercase text-[10px]">Contact Phone</span>
+                            <span class="font-bold text-slate-800" id="sheet-user-phone">N/A</span>
+                        </div>
+                    </div>
+
+                    <!-- Clean printable hour list table -->
+                    <div class="py-6">
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-700 mb-3">Service Hours Log (Active Calendar Month)</h4>
+                        <table class="min-w-full divide-y divide-slate-300 text-xs text-slate-800 text-left">
+                            <thead class="bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-2 px-3 font-semibold">Date</th>
+                                    <th class="py-2 px-3 font-semibold">Program/Location</th>
+                                    <th class="py-2 px-3 font-semibold">Activity Category</th>
+                                    <th class="py-2 px-3 font-semibold">Description of Duties</th>
+                                    <th class="py-2 px-3 font-semibold text-center">Hours</th>
+                                    <th class="py-2 px-3 font-semibold">Supervisor / Verification Contact</th>
+                                    <th class="py-2 px-3 font-semibold text-center">Signature Confirmation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sheet-table-body" class="divide-y divide-slate-200">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                            <tfoot class="border-t-2 border-slate-300 font-bold bg-slate-50">
+                                <tr>
+                                    <td colspan="4" class="py-3 px-3 text-right text-xs uppercase">Accumulated Monthly Verified Hours</td>
+                                    <td class="py-3 px-3 text-center text-sm font-extrabold text-emerald-800" id="sheet-total-hours">0.0</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Certification declaration and signatures block -->
+                    <div class="pt-6 border-t border-slate-200 space-y-6 text-xs text-slate-700">
+                        <div>
+                            <h5 class="font-bold text-slate-800 uppercase mb-2">Participant Statement and Declaration:</h5>
+                            <p class="leading-relaxed text-[11px] text-slate-500">
+                                I hereby certify and declare under penalty of perjury that the community engagement services detailed on this timesheet are a true, accurate, and faithful representation of the community service, education, or employment duties completed by myself. I understand that submitting false logs can lead to the termination of my Medicaid health benefits.
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                            <div>
+                                <span class="block border-b border-slate-400 h-8"></span>
+                                <span class="block mt-1 font-semibold text-slate-500 text-[10px] uppercase">Participant Legal Signature & Date</span>
+                            </div>
+                            <div>
+                                <span class="block border-b border-slate-400 h-8"></span>
+                                <span class="block mt-1 font-semibold text-slate-500 text-[10px] uppercase">HRDC Program Representative / Notary Endorsement</span>
+                            </div>
+                        </div>
+
+                        <!-- Statement of Confidentiality standard disclaimer matching Gallatin Food Bank -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3.5 text-[10px] text-slate-500 leading-relaxed">
+                            <strong>Note on Statement of Confidentiality:</strong> All interactions with HRDC District IX programs, including the Gallatin Valley Food Bank and partner community kitchens, respect strict participant and client privacy under state regulations and HIPAA laws. Privileged details discussed or observed within HRDC campuses remain entirely confidential and may not be disclosed beyond appropriate administrative authorities.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== 5. RULES & FAQ VIEW ================== -->
+        <div id="view-faq" class="tab-view hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="font-bold text-lg text-slate-850 mb-4">Montana Medicaid Expansion Community Engagement Rules (2026)</h3>
+                <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded-r">
+                        <strong class="text-indigo-900 text-xs block uppercase mb-1">Key Obligation</strong>
+                        <span class="text-slate-800 text-xs">If you are between the ages of 19 and 64 and qualify for Medicaid Expansion in Montana, you must complete at least <strong>80 hours</strong> of community engagement every calendar month unless you fall under a specific exclusion.</span>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-1">What tasks qualify toward the 80-hour requirement?</h4>
+                        <p class="text-xs">
+                            Montana DPHHS permits a flexible mixture of activities to complete your requirement:
+                        </p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1 text-xs">
+                            <li><strong>Regular Paid Employment:</strong> Active hours worked or earning equal to $580/month (80 hours multiplied by minimum wage).</li>
+                            <li><strong>Community Service & Volunteering:</strong> Scheduled service completed at nonprofit or government programs (such as Gallatin Valley Food Bank, Fork & Spoon).</li>
+                            <li><strong>Workforce Preparedness Training:</strong> Programs coordinated by HRDC or state workforce dev initiatives.</li>
+                            <li><strong>Higher Education & Vocational Training:</strong> College courses or skill licensing curriculum.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="font-bold text-slate-800 mb-1">What is the "Hold Harmless" period in 2026?</h4>
+                        <p class="text-xs">
+                            The state declared a hold-harmless window from <strong>July through September 2026</strong>. Compliance will be monitored and checked for eligibility renewals, but you won't be dis-enrolled if you fall short. Mandatory enforcement with disenrollment penalties begins <strong>October 1, 2026</strong>.
+                        </p>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="font-bold text-slate-800 mb-1">How do I submit this to Montana DPHHS?</h4>
+                        <p class="text-xs">
+                            You must log hours regularly. Use this portal to track your services. Once your monthly goal is completed, print the generated <strong>Medicaid Expansion Community Engagement Timesheet</strong>, have your HRDC supervisors sign it, and submit the verification sheet directly via your online DPHHS portal or take it to your local public assistance office.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FULLSCREEN RECIPIENT INFORMATION EDIT MODAL -->
+    <div id="profile-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md shadow-xl overflow-hidden animate-in fade-in duration-200">
+            <div class="bg-emerald-900 text-white p-5">
+                <h3 class="font-bold text-base">Participant Profile Details</h3>
+                <p class="text-xs text-emerald-100 mt-1">Configure your official state Medicaid registration details to populate the forms.</p>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Legal Name</label>
+                    <input type="text" id="modal-user-name" placeholder="John Doe" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">DPHHS Case ID #</label>
+                        <input type="text" id="modal-case-id" placeholder="e.g. 109847" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Medicaid ID</label>
+                        <input type="text" id="modal-medid" placeholder="e.g. MT-858392" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contact Phone Number</label>
+                    <input type="text" id="modal-phone" placeholder="(406) 555-0199" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-[11px] text-slate-500">
+                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>This data is preserved strictly inside your browser for printable formatting.</span>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button onclick="closeProfileModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg border border-slate-200 transition">
+                        Cancel
+                    </button>
+                    <button onclick="saveProfile()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg transition">
+                        Save Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION POPUP (No Native Alerts) -->
+    <div id="toast-notif" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center space-x-2 border border-slate-700 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <span id="toast-text">System Notification</span>
+    </div>
+
+    <!-- PRINT ONLY VIEW CONTAINER -->
+    <div class="hidden print-only bg-white text-slate-900 text-xs p-4">
+        <!-- Exact replica formatted specifically for clean hardcopy output -->
+        <div id="print-sheet-content"></div>
+    </div>
+
+    <footer class="bg-slate-100 border-t border-slate-200 py-4 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-medium">
+            &copy; 2026 HRDC District IX Support Utilities. Constructed for Montana Medicaid Work/Volunteer Compliance Verification.
+        </div>
+    </footer>
+
+    <!-- IN-MEMORY & STORAGE JAVASCRIPT STATE CONTROLLER -->
+    <script>
+        // Default Local Storage Setup
+        const defaultProfile = {
+            name: "John Doe",
+            caseId: "74859",
+            medid: "MT-482939",
+            phone: "(406) 586-7600"
+        };
+
+        let profile = JSON.parse(localStorage.getItem('hrdc_medicaid_profile')) || defaultProfile;
+        let logs = JSON.parse(localStorage.getItem('hrdc_medicaid_logs')) || [];
+
+        // Digital Signature variables
+        let canvas, ctx;
+        let drawing = false;
+        let hasSigned = false;
+
+        window.onload = function() {
+            // Setup Profile Details
+            syncProfileUI();
+
+            // Setup Date input default to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('form-date').value = today;
+
+            // Load Hours Logs Table
+            renderHistoryTable();
+            updateDashboard();
+
+            // Initialize Signature Pad
+            initSignatureCanvas();
+
+            // Listen for window resize to fix canvas scaling
+            window.addEventListener('resize', handleCanvasResize);
+        };
+
+        // UI Tabs Switcher
+        function switchTab(tabId) {
+            // Hide all tab views
+            const views = document.querySelectorAll('.tab-view');
+            views.forEach(v => v.classList.add('hidden'));
+
+            // Show targets
+            const activeView = document.getElementById('view-' + tabId);
+            if (activeView) activeView.classList.remove('hidden');
+
+            // Reset tab button stylings
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.classList.remove('text-emerald-600', 'border-emerald-600');
+                btn.classList.add('text-slate-500', 'border-transparent');
+            });
+
+            // Set active button style
+            const activeBtn = document.getElementById('tab-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-500', 'border-transparent');
+                activeBtn.classList.add('text-emerald-600', 'border-emerald-600');
+            }
+
+            // Custom initializations on tab load
+            if (tabId === 'verification-sheet') {
+                preparePrintSheet();
+            }
+        }
+
+        // Profile Modal controllers
+        function openProfileModal() {
+            document.getElementById('modal-user-name').value = profile.name;
+            document.getElementById('modal-case-id').value = profile.caseId;
+            document.getElementById('modal-medid').value = profile.medid;
+            document.getElementById('modal-phone').value = profile.phone;
+
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function saveProfile() {
+            profile.name = document.getElementById('modal-user-name').value.trim() || "N/A";
+            profile.caseId = document.getElementById('modal-case-id').value.trim() || "N/A";
+            profile.medid = document.getElementById('modal-medid').value.trim() || "N/A";
+            profile.phone = document.getElementById('modal-phone').value.trim() || "N/A";
+
+            localStorage.setItem('hrdc_medicaid_profile', JSON.stringify(profile));
+            syncProfileUI();
+            closeProfileModal();
+            showToast("Profile details updated successfully!");
+
+            // Refresh sheets
+            preparePrintSheet();
+        }
+
+        function syncProfileUI() {
+            document.getElementById('header-user-name').innerText = profile.name;
+            document.getElementById('header-user-case').innerText = profile.caseId;
+            document.getElementById('header-user-medid').innerText = profile.medid;
+
+            // Fill sheet placeholders
+            document.getElementById('sheet-user-name').innerText = profile.name;
+            document.getElementById('sheet-case-id').innerText = profile.caseId;
+            document.getElementById('sheet-medicaid-id').innerText = profile.medid;
+            document.getElementById('sheet-user-phone').innerText = profile.phone;
+        }
+
+        // Interactive Signature Pad Implementation
+        function initSignatureCanvas() {
+            canvas = document.getElementById('signature-canvas');
+            if (!canvas) return;
+            ctx = canvas.getContext('2d');
+            
+            // Adjust dimensions
+            handleCanvasResize();
+
+            // Set drawing styling
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#064e3b'; // dark emerald color
+
+            // Event Listeners for drawing
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', endDrawing);
+            canvas.addEventListener('mousemove', draw);
+
+            // Add touchscreen support
+            canvas.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+                e.preventDefault();
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', (e) => {
+                const mouseEvent = new MouseEvent('mouseup', {});
+                canvas.dispatchEvent(mouseEvent);
+                e.preventDefault();
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+                e.preventDefault();
+            }, { passive: false });
+        }
+
+        function handleCanvasResize() {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            // Scale resolution to prevent blurs
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            // Clear signature on resize to maintain integrity
+            clearSignatureCanvas();
+        }
+
+        function startDrawing(e) {
+            drawing = true;
+            hasSigned = true;
+            ctx.beginPath();
+            const pos = getMousePos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function endDrawing() {
+            drawing = false;
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            const pos = getMousePos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function clearSignatureCanvas() {
+            if (!canvas || !ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSigned = false;
+        }
+
+        // Save Form Logs Logic
+        function saveHourEntry(e) {
+            e.preventDefault();
+
+            const date = document.getElementById('form-date').value;
+            const activityType = document.getElementById('form-activity-type').value;
+            const site = document.getElementById('form-site').value;
+            const hours = parseFloat(document.getElementById('form-hours').value);
+            const desc = document.getElementById('form-description').value.trim();
+            const supName = document.getElementById('form-sup-name').value.trim();
+            const supContact = document.getElementById('form-sup-contact').value.trim();
+
+            if (isNaN(hours) || hours <= 0) {
+                showToast("Please enter a valid amount of hours.");
+                return;
+            }
+
+            // Capture signature image payload
+            let signatureData = null;
+            if (hasSigned) {
+                signatureData = canvas.toDataURL();
+            }
+
+            const newEntry = {
+                id: Date.now().toString(),
+                date,
+                activityType,
+                site,
+                hours,
+                description: desc,
+                supervisor: supName,
+                contact: supContact,
+                signature: signatureData
+            };
+
+            logs.push(newEntry);
+            localStorage.setItem('hrdc_medicaid_logs', JSON.stringify(logs));
+
+            // Reset state
+            document.getElementById('hour-log-form').reset();
+            clearSignatureCanvas();
+            document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+
+            showToast("Hour entry logged to your history.");
+            
+            // Re-render components
+            renderHistoryTable();
+            updateDashboard();
+            switchTab('history');
+        }
+
+        // Dashboard Metrics update logic
+        function updateDashboard() {
+            // Find total hours logged
+            let total = 0;
+            let totalCS = 0;
+            let totalVol = 0;
+            let totalJob = 0;
+            let totalEmp = 0;
+
+            logs.forEach(log => {
+                total += log.hours;
+                if (log.activityType === "Community Service") totalCS += log.hours;
+                else if (log.activityType === "Volunteering") totalVol += log.hours;
+                else if (log.activityType === "Workforce Development") totalJob += log.hours;
+                else if (log.activityType === "Employment/Education") totalEmp += log.hours;
+            });
+
+            // Update stats
+            document.getElementById('dash-total-hours').innerText = total.toFixed(1);
+            document.getElementById('dash-total-entries').innerText = `${logs.length} Logs`;
+
+            // Calculate progress bar width (capped at 100)
+            const progressPct = Math.min((total / 80) * 100, 100);
+            document.getElementById('dash-progress-bar').style.width = `${progressPct}%`;
+
+            // Calculate needed hours
+            const remaining = Math.max(80 - total, 0);
+            document.getElementById('dash-hours-needed').innerText = remaining.toFixed(1);
+
+            const badge = document.getElementById('dash-status-badge');
+            if (total >= 80) {
+                badge.innerText = "Congratulations! You have achieved your 80-hour Medicaid Community Engagement goal for this month.";
+                badge.className = "bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg p-3 text-xs mt-2 text-center font-bold";
+            } else {
+                badge.innerHTML = `Still need <strong class="font-bold">${remaining.toFixed(1)}</strong> hours to hit your goal this month.`;
+                badge.className = "bg-amber-50 text-amber-700 border border-amber-200 rounded-lg p-3 text-xs mt-2 text-center font-medium";
+            }
+
+            // Update category breakdowns
+            document.getElementById('breakdown-cs').innerText = `${totalCS.toFixed(1)} hrs`;
+            document.getElementById('breakdown-vol').innerText = `${totalVol.toFixed(1)} hrs`;
+            document.getElementById('breakdown-job').innerText = `${totalJob.toFixed(1)} hrs`;
+            document.getElementById('breakdown-emp').innerText = `${totalEmp.toFixed(1)} hrs`;
+
+            // Calculate days left in active month (simulate July 2026 current date target setup)
+            const today = new Date("2026-07-06");
+            const endOfMonth = new Date("2026-07-31");
+            const diffTime = Math.abs(endOfMonth - today);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('dash-days-left').innerText = `${diffDays} Days`;
+        }
+
+        // Render logs in the Verification log history tab
+        function renderHistoryTable() {
+            const tbody = document.getElementById('history-table-body');
+            const emptyState = document.getElementById('history-empty-state');
+            const filter = document.getElementById('filter-activity').value;
+
+            tbody.innerHTML = '';
+
+            let filteredLogs = logs;
+            if (filter !== 'All') {
+                filteredLogs = logs.filter(l => l.activityType === filter);
+            }
+
+            if (filteredLogs.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Sort logs by date descending
+            filteredLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            filteredLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition duration-150";
+
+                // Format signature display
+                let sigMarkup = `<span class="text-xs text-amber-500 italic font-semibold">Pending</span>`;
+                if (log.signature) {
+                    sigMarkup = `<img src="${log.signature}" class="h-6 w-16 mx-auto object-contain border border-slate-200 rounded bg-white p-0.5" alt="Sig" />`;
+                }
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-xs font-bold text-slate-800">${log.date}</div>
+                        <div class="text-[10px] text-slate-500 font-semibold">${log.site}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded-full ${getActivityBadgeStyle(log.activityType)}">
+                            ${log.activityType}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-xs text-slate-600 font-medium max-w-xs truncate">${log.description}</p>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-xs font-bold text-slate-800">
+                        ${log.hours.toFixed(1)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-xs font-semibold text-slate-800">${log.supervisor}</div>
+                        <div class="text-[10px] text-slate-400">${log.contact}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        ${sigMarkup}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
+                        <button onclick="deleteLogEntry('${log.id}')" class="text-rose-600 hover:text-rose-900 font-bold ml-2">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getActivityBadgeStyle(type) {
+            switch(type) {
+                case 'Community Service': return 'bg-amber-100 text-amber-800';
+                case 'Volunteering': return 'bg-emerald-100 text-emerald-800';
+                case 'Workforce Development': return 'bg-indigo-100 text-indigo-800';
+                case 'Employment/Education': return 'bg-sky-100 text-sky-800';
+                default: return 'bg-slate-100 text-slate-800';
+            }
+        }
+
+        function deleteLogEntry(id) {
+            logs = logs.filter(l => l.id !== id);
+            localStorage.setItem('hrdc_medicaid_logs', JSON.stringify(logs));
+            renderHistoryTable();
+            updateDashboard();
+            showToast("Log entry deleted successfully.");
+        }
+
+        function clearAllLogs() {
+            if (confirm("Are you sure you want to clear your hours logging history? This cannot be undone.")) {
+                logs = [];
+                localStorage.removeItem('hrdc_medicaid_logs');
+                renderHistoryTable();
+                updateDashboard();
+                showToast("Cleared all timesheet data logs.");
+            }
+        }
+
+        // Preparation of the printable preview sheet
+        function preparePrintSheet() {
+            const sheetBody = document.getElementById('sheet-table-body');
+            sheetBody.innerHTML = '';
+
+            let total = 0;
+
+            if (logs.length === 0) {
+                sheetBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-slate-400 italic">No community service hours logged for the active verification period.</td>
+                    </tr>
+                `;
+                document.getElementById('sheet-total-hours').innerText = "0.0";
+                return;
+            }
+
+            // Sort logs chronologically for printing
+            const sortedLogs = [...logs].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            sortedLogs.forEach(log => {
+                total += log.hours;
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-200";
+
+                let signatureCell = `<span class="text-[10px] text-slate-300 italic">Pending Manual Sign</span>`;
+                if (log.signature) {
+                    signatureCell = `<img src="${log.signature}" class="h-6 max-w-[80px] mx-auto object-contain" alt="Sig" />`;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 whitespace-nowrap font-semibold">${log.date}</td>
+                    <td class="py-2.5 px-3">${log.site}</td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-600">${log.activityType}</td>
+                    <td class="py-2.5 px-3 text-[11px] text-slate-500">${log.description}</td>
+                    <td class="py-2.5 px-3 text-center font-bold">${log.hours.toFixed(1)}</td>
+                    <td class="py-2.5 px-3">${log.supervisor} (${log.contact})</td>
+                    <td class="py-2.5 px-3 text-center">${signatureCell}</td>
+                `;
+                sheetBody.appendChild(tr);
+            });
+
+            document.getElementById('sheet-total-hours').innerText = total.toFixed(1);
+
+            // Populate high resolution print stylesheet target elements
+            const fullSheetClone = document.getElementById('view-verification-sheet').querySelector('.border-slate-300').cloneNode(true);
+            document.getElementById('print-sheet-content').innerHTML = '';
+            document.getElementById('print-sheet-content').appendChild(fullSheetClone);
+        }
+
+        // System notification custom handler (no alert block bypass)
+        function showToast(message) {
+            const toast = document.getElementById('toast-notif');
+            document.getElementById('toast-text').innerText = message;
+            
+            // Pop up animations
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
